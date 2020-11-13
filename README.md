@@ -6,7 +6,8 @@
 2.安装完毕后找到python.exe所在文件夹，在地址栏输入cmd然后按回车打开命令行窗口，在cmd里输入        
   pip install -r requirements.txt -U -i http://pypi.tuna.tsinghua.edu.cn/simple         
 3.将geckodriver.exe拖入C盘根目录，下载配套的82.0.3 (64 位)的Firefox浏览器     
-4.安装thonny或者PyCharm或者vscode或者anaconda(个人推荐vscode或者thonny，前者万能，后者小巧)     
+4.安装thonny或者PyCharm或者vscode或者anaconda，有这几个软件可以用它去装依赖库，不需要用第二步装
+(个人推荐vscode或者thonny，前者万能，后者小巧)     
 5.使用上述其中一个软件打开并运行(电脑内存不够的可以忽略第三步，直接在cmd里输入      
           python B站动态删除.py    
 直接启动)      
