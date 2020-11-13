@@ -7,6 +7,11 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import jieba.posseg as psg
 
+'''
+前缀为#的后续单行句子为注释，上下都用三个'的是长注释，有需求可以删除注释启用单词循环和注释掉遍历全部的循环
+'''
+
+
 UTIL_CN_NUM = {
     '零': 0, '一': 1, '二': 2, '两': 2, '三': 3, '四': 4,
     '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
