@@ -309,7 +309,7 @@ while True:
     for t in list_time:
         if t < time_real:
             #wrong_id_list.append(list_id[n_id])
-            fp.write(list_id[n_id])
+            fp.write(list_id[n_id]+',')
         else:
             pass
         n_id += 1
