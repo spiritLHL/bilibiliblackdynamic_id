@@ -8,13 +8,13 @@ from dateutil.parser import parse
 import jieba.posseg as psg
 
 UTIL_CN_NUM = {
-    'Áã': 0, 'Ò»': 1, '¶ş': 2, 'Á½': 2, 'Èı': 3, 'ËÄ': 4,
-    'Îå': 5, 'Áù': 6, 'Æß': 7, '°Ë': 8, '¾Å': 9,
+    'é›¶': 0, 'ä¸€': 1, 'äºŒ': 2, 'ä¸¤': 2, 'ä¸‰': 3, 'å››': 4,
+    'äº”': 5, 'å…­': 6, 'ä¸ƒ': 7, 'å…«': 8, 'ä¹': 9,
     '0': 0, '1': 1, '2': 2, '3': 3, '4': 4,
     '5': 5, '6': 6, '7': 7, '8': 8, '9': 9
 }
 
-UTIL_CN_UNIT = {'Ê®': 10, '°Ù': 100, 'Ç§': 1000, 'Íò': 10000}
+UTIL_CN_UNIT = {'å': 10, 'ç™¾': 100, 'åƒ': 1000, 'ä¸‡': 10000}
 
 
 def cn2dig(src):
@@ -64,7 +64,7 @@ def parse_datetime(msg):
         return dt.strftime('%Y-%m-%d %H:%M:%S')
     except Exception as e:
         m = re.match(
-            r"([0-9ÁãÒ»¶şÁ½ÈıËÄÎåÁùÆß°Ë¾ÅÊ®]+Äê)?([0-9Ò»¶şÁ½ÈıËÄÎåÁùÆß°Ë¾ÅÊ®]+ÔÂ)?([0-9Ò»¶şÁ½ÈıËÄÎåÁùÆß°Ë¾ÅÊ®]+[ºÅÈÕ])?([ÉÏÖĞÏÂÎçÍíÔç]+)?([0-9ÁãÒ»¶şÁ½ÈıËÄÎåÁùÆß°Ë¾ÅÊ®°Ù]+[µã:\.Ê±])?([0-9ÁãÒ»¶şÈıËÄÎåÁùÆß°Ë¾ÅÊ®°Ù]+·Ö?)?([0-9ÁãÒ»¶şÈıËÄÎåÁùÆß°Ë¾ÅÊ®°Ù]+Ãë)?",
+            r"([0-9é›¶ä¸€äºŒä¸¤ä¸‰å››äº”å…­ä¸ƒå…«ä¹å]+å¹´)?([0-9ä¸€äºŒä¸¤ä¸‰å››äº”å…­ä¸ƒå…«ä¹å]+æœˆ)?([0-9ä¸€äºŒä¸¤ä¸‰å››äº”å…­ä¸ƒå…«ä¹å]+[å·æ—¥])?([ä¸Šä¸­ä¸‹åˆæ™šæ—©]+)?([0-9é›¶ä¸€äºŒä¸¤ä¸‰å››äº”å…­ä¸ƒå…«ä¹åç™¾]+[ç‚¹:\.æ—¶])?([0-9é›¶ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹åç™¾]+åˆ†?)?([0-9é›¶ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹åç™¾]+ç§’)?",
             msg)
         if m.group(0) is not None:
             res = {
@@ -89,7 +89,7 @@ def parse_datetime(msg):
             target_date = datetime.today().replace(**params)
             is_pm = m.group(4)
             if is_pm is not None:
-                if is_pm == u'ÏÂÎç' or is_pm == u'ÍíÉÏ' or is_pm == 'ÖĞÎç':
+                if is_pm == u'ä¸‹åˆ' or is_pm == u'æ™šä¸Š' or is_pm == 'ä¸­åˆ':
                     hour = target_date.time().hour
                     if hour < 12:
                         target_date = target_date.replace(hour=hour + 12)
@@ -103,23 +103,23 @@ def check_time_valid(word):
     if m:
         if len(word) <= 6:
             return None
-    word1 = re.sub('[ºÅ|ÈÕ]\d+$', 'ÈÕ', word)
+    word1 = re.sub('[å·|æ—¥]\d+$', 'æ—¥', word)
     if word1 != word:
         return check_time_valid(word1)
     else:
         return word1
 
 
-# Ê±¼äÌáÈ¡
+# æ—¶é—´æå–
 def time_extract(text):
     time_res = []
     word = ''
-    keyDate = {'½ñÌì': 0, 'Ã÷Ìì': 1, 'ºóÌì': 2}
+    keyDate = {'ä»Šå¤©': 0, 'æ˜å¤©': 1, 'åå¤©': 2}
     for k, v in psg.cut(text):
         if k in keyDate:
             if word != '':
                 time_res.append(word)
-            word = (datetime.today() + timedelta(days=keyDate.get(k, 0))).strftime('%Y{y}%m{m}%d{d}').format(y='Äê',m='ÔÂ',d='ÈÕ')
+            word = (datetime.today() + timedelta(days=keyDate.get(k, 0))).strftime('%Y{y}%m{m}%d{d}').format(y='å¹´',m='æœˆ',d='æ—¥')
 
         elif word != '':
             if v in ['m', 't']:
@@ -137,20 +137,20 @@ def time_extract(text):
     return [x for x in final_res if x is not None]
 
 ########################################################################################################################
-#µ¥´ÎÑ­»·²âÊÔ
+#å•æ¬¡å¾ªç¯æµ‹è¯•
 '''
 #ex = extractor()
 driver = webdriver.Firefox(executable_path=r'C:\geckodriver.exe')
 driver.get("https://www.bilibili.com/")
 time.sleep(3)
 driver.find_element_by_xpath('/html/body/div[2]/div/div[1]/div[1]/div/div[3]/div[2]/div[1]/div/span/div/span').click()
-time.sleep(20)
+time.sleep(20) #ç¬¬ä¸€æ­¥ç­‰å¾…æ—¶é•¿ä¸º20ç§’ï¼Œæœ‰éœ€æ±‚è‡ªå·±æ”¹
 driver.get('https://space.bilibili.com/')
 time.sleep(5)
 driver.find_element_by_xpath('/html/body/div[2]/div[2]/div/div[1]/div[1]/a[2]').click()
 i = 0
 js = "window.scrollTo(0,99999999);"
-while i < 5:#Ò³Ãæ¼ÓÔØ³¤¶È
+while i < 5:#é¡µé¢åŠ è½½é•¿åº¦
     i +=1
     time.sleep(3)
     driver.execute_script(js)
@@ -158,7 +158,7 @@ while i < 5:#Ò³Ãæ¼ÓÔØ³¤¶È
 list_time = []
 list_text = []
 list_id = []
-#Ò³ÃæÒş²ØÄÚÈİ¼¤·¢
+#é¡µé¢éšè—å†…å®¹æ¿€å‘
 origin_page = driver.find_elements_by_class_name('fold-text')
 for p in origin_page:
     time.sleep(1)
@@ -168,7 +168,7 @@ for o in origin:
     time.sleep(1)
     o.click()
 time.sleep(1)
-#×ª·¢¶¯Ì¬ÎÄ±¾»ñÈ¡
+#è½¬å‘åŠ¨æ€æ–‡æœ¬è·å–
 text = driver.find_elements_by_class_name('card')
 time.sleep(2)
 for t in text:
@@ -177,13 +177,13 @@ for t in text:
     list_text.append(real_t)
 list_text=[x for x in list_text if x!='']
 time.sleep(3)
-#×ª·¢¶¯Ì¬µÄid»ñÈ¡
+#è½¬å‘åŠ¨æ€çš„idè·å–
 id = driver.find_elements_by_xpath('//div[@class="post-content repost"]')
 for e in id:
     list_id.append(e.get_attribute('data-ori-did'))
 print(list_id)
 time.sleep(3)
-#ÎÄ±¾ÈÕÆÚÊ¶±ğ
+#æ–‡æœ¬æ—¥æœŸè¯†åˆ«
 
 
 for te in list_text:
@@ -209,9 +209,9 @@ print(list_time)
 print(list_id)
 
 
-#fp = open('./ĞèÒªÉ¾³ıµÄid.txt','w',encoding='utf-8')
+#fp = open('./éœ€è¦åˆ é™¤çš„id.txt','w',encoding='utf-8')
 wrong_id_list = []
-time_real = 20201112
+time_real = 20201112 #å½“å‰æ—¥æœŸè¯·è¾“å…¥ egï¼š2020å¹´11æœˆ12æ—¥å†™ä¸º20201112
 n_id = 0
 for t in list_time:
     if t < time_real:
@@ -223,7 +223,7 @@ for t in list_time:
 print(wrong_id_list)
 '''
 ########################################################################################################################
-#Ñ­»·±éÀúµ½×îºó
+#å¾ªç¯éå†åˆ°æœ€å
 while True:
     #ex = extractor()
     driver = webdriver.Firefox(executable_path=r'C:\geckodriver.exe')
@@ -231,13 +231,13 @@ while True:
     time.sleep(3)
     driver.find_element_by_xpath(
         '/html/body/div[2]/div/div[1]/div[1]/div/div[3]/div[2]/div[1]/div/span/div/span').click()
-    time.sleep(20)
+    time.sleep(20) #ç¬¬ä¸€æ­¥ç­‰å¾…æ—¶é•¿ä¸º20ç§’ï¼Œæœ‰éœ€æ±‚è‡ªå·±æ”¹
     driver.get('https://space.bilibili.com/')
     time.sleep(5)
     driver.find_element_by_xpath('/html/body/div[2]/div[2]/div/div[1]/div[1]/a[2]').click()
     i = 0
     js = "window.scrollTo(0,99999999);"
-    while i < 50:  # Ò³Ãæ¼ÓÔØ³¤¶È
+    while i < 50:  # é¡µé¢åŠ è½½é•¿åº¦
         i += 1
         time.sleep(3)
         driver.execute_script(js)
@@ -245,7 +245,7 @@ while True:
     list_time = []
     list_text = []
     list_id = []
-    # Ò³ÃæÒş²ØÄÚÈİ¼¤·¢
+    # é¡µé¢éšè—å†…å®¹æ¿€å‘
     origin_page = driver.find_elements_by_class_name('fold-text')
     for p in origin_page:
         time.sleep(1)
@@ -255,7 +255,7 @@ while True:
         time.sleep(1)
         o.click()
     time.sleep(1)
-    # ×ª·¢¶¯Ì¬ÎÄ±¾»ñÈ¡
+    # è½¬å‘åŠ¨æ€æ–‡æœ¬è·å–
     text = driver.find_elements_by_class_name('card')
     time.sleep(2)
     for t in text:
@@ -264,13 +264,13 @@ while True:
         list_text.append(real_t)
     list_text = [x for x in list_text if x != '']
     time.sleep(3)
-    # ×ª·¢¶¯Ì¬µÄid»ñÈ¡
+    # è½¬å‘åŠ¨æ€çš„idè·å–
     id = driver.find_elements_by_xpath('//div[@class="post-content repost"]')
     for e in id:
         list_id.append(e.get_attribute('data-ori-did'))
     print(list_id)
     time.sleep(3)
-    # ÎÄ±¾ÈÕÆÚÊ¶±ğ
+    # æ–‡æœ¬æ—¥æœŸè¯†åˆ«
 
     for te in list_text:
         try:
@@ -297,9 +297,9 @@ while True:
     print(list_time)
     print(list_id)
 
-    fp = open('./ĞèÒªÉ¾³ıµÄid.txt','w',encoding='utf-8')
+    fp = open('./éœ€è¦åˆ é™¤çš„id.txt','w',encoding='utf-8')
     wrong_id_list = []
-    time_real = 20201112
+    time_real = 20201112 #å½“å‰æ—¥æœŸè¯·è¾“å…¥ egï¼š2020å¹´11æœˆ12æ—¥å†™ä¸º20201112
     n_id = 0
     for t in list_time:
         if t < time_real:
