@@ -3,7 +3,7 @@
 需要firfox浏览器与配套的driver，抓取元素如果更换浏览器可能不适用。   
 使用步骤：   
 1.安装python解释器，最好安装我开发时用的3.7版本，避免版本不同依赖库不兼容   
-2.安装完毕后找到python.exe所在文件夹，在地址栏输入cmd，输入        
+2.安装完毕后找到python.exe所在文件夹，在地址栏输入cmd然后按回车打开命令行窗口，在cmd里输入        
   pip install -r requirements.txt -U -i http://pypi.tuna.tsinghua.edu.cn/simple         
 3.将geckodriver.exe拖入C盘根目录，下载配套的82.0.3 (64 位)的Firefox浏览器     
 4.安装thonny或者PyCharm或者vscode或者anaconda(个人推荐vscode或者thonny，前者万能，后者小巧)     
