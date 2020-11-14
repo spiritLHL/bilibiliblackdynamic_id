@@ -229,90 +229,88 @@ print(wrong_id_list)
 '''
 ########################################################################################################################
 #循环遍历到最后
-while True:
-    #ex = extractor()
-    driver = webdriver.Firefox(executable_path=r'C:\geckodriver.exe')
-    driver.get("https://www.bilibili.com/")
+#ex = extractor()
+driver = webdriver.Firefox(executable_path=r'C:\geckodriver.exe')
+driver.get("https://www.bilibili.com/")
+time.sleep(3)
+driver.find_element_by_xpath(
+      '/html/body/div[2]/div/div[1]/div[1]/div/div[3]/div[2]/div[1]/div/span/div/span').click()
+time.sleep(20) #第一步等待时长为20秒，有需求自己改
+driver.get('https://space.bilibili.com/')
+time.sleep(5)
+driver.find_element_by_xpath('/html/body/div[2]/div[2]/div/div[1]/div[1]/a[2]').click()
+i = 0
+js = "window.scrollTo(0,99999999);"
+while i < 1000:  # 页面加载长度
+    i += 1
     time.sleep(3)
-    driver.find_element_by_xpath(
-        '/html/body/div[2]/div/div[1]/div[1]/div/div[3]/div[2]/div[1]/div/span/div/span').click()
-    time.sleep(20) #第一步等待时长为20秒，有需求自己改
-    driver.get('https://space.bilibili.com/')
-    time.sleep(5)
-    driver.find_element_by_xpath('/html/body/div[2]/div[2]/div/div[1]/div[1]/a[2]').click()
-    i = 0
-    js = "window.scrollTo(0,99999999);"
-    while i < 50:  # 页面加载长度
-        i += 1
-        time.sleep(3)
-        driver.execute_script(js)
+    driver.execute_script(js)
 
-    list_time = []
-    list_text = []
-    list_id = []
-    # 页面隐藏内容激发
-    origin_page = driver.find_elements_by_class_name('fold-text')
-    for p in origin_page:
-        time.sleep(1)
-        p.click()
-    origin = driver.find_elements_by_class_name('expand-btn')
-    for o in origin:
-        time.sleep(1)
-        o.click()
+list_time = []
+list_text = []
+list_id = []
+# 页面隐藏内容激发
+origin_page = driver.find_elements_by_class_name('fold-text')
+for p in origin_page:
     time.sleep(1)
-    # 转发动态文本获取
-    text = driver.find_elements_by_class_name('card')
-    time.sleep(2)
-    for t in text:
-        part_text = t.get_attribute('innerText')
-        real_t = re.sub('[a-zA-z]', '', part_text)
-        list_text.append(real_t)
-    list_text = [x for x in list_text if x != '']
-    time.sleep(3)
-    # 转发动态的id获取
-    id = driver.find_elements_by_xpath('//div[@class="post-content repost"]')
-    for e in id:
-        list_id.append(e.get_attribute('data-ori-did'))
-    print(list_id)
-    time.sleep(3)
-    # 文本日期识别
+    p.click()
+origin = driver.find_elements_by_class_name('expand-btn')
+for o in origin:
+    time.sleep(1)
+    o.click()
+time.sleep(1)
+# 转发动态文本获取
+text = driver.find_elements_by_class_name('card')
+time.sleep(2)
+for t in text:
+    part_text = t.get_attribute('innerText')
+    real_t = re.sub('[a-zA-z]', '', part_text)
+    list_text.append(real_t)
+list_text = [x for x in list_text if x != '']
+time.sleep(3)
+# 转发动态的id获取
+id = driver.find_elements_by_xpath('//div[@class="post-content repost"]')
+for e in id:
+    list_id.append(e.get_attribute('data-ori-did'))
+#print(list_id)
+time.sleep(3)
+# 文本日期识别
 
-    for te in list_text:
-        try:
-            # times = ex.extract_time(te)
-            print(te)
-            times = time_extract(te)
-            list_te = []
-            for tim in times:
-                list_te.append(tim[5:10])
-            print(max(list_te))
-            max_t = max(list_te)
-            real_time = '2020' + f'{max_t[0:2]}' + f'{max_t[3:5]}'
-            rel_time = int(real_time)
-            print(real_time)
-            list_time.append(rel_time)
-            time.sleep(3)
-        except:
-            list_time.append(20201231)
-    '''
+for te in list_text:
+    try:
+        # times = ex.extract_time(te)
+        print(te)
+        times = time_extract(te)
+        list_te = []
+        for tim in times:
+            list_te.append(tim[5:10])
+        print(max(list_te))
+        max_t = max(list_te)
+        real_time = '2020' + f'{max_t[0:2]}' + f'{max_t[3:5]}'
+        rel_time = int(real_time)
+        print(real_time)
+        list_time.append(rel_time)
+        time.sleep(3)
     except:
-        pass
-    '''
-    print(list_text)
-    print(list_time)
-    print(list_id)
+        list_time.append(20201231)
+'''
+except:
+    pass
+'''
+print(list_text)
+print(list_time)
+print(list_id)
 
-    fp = open('./需要删除的id.txt','w',encoding='utf-8')
-    wrong_id_list = []
-    time_real = 20201112 #当前日期请输入 eg：2020年11月12日写为20201112
-    n_id = 0
-    for t in list_time:
-        if t < time_real:
-            #wrong_id_list.append(list_id[n_id])
-            fp.write(list_id[n_id]+',')
-        else:
-            pass
-        n_id += 1
-    print(wrong_id_list)
-    time.sleep(108000)
+fp = open('./需要删除的id.txt','w',encoding='utf-8')
+wrong_id_list = []
+time_real = 20201114 #当前日期请输入 eg：程序要在2020年11月13日运行写为20201114 日期要往后多写一天
+n_id = 0
+for t in list_time:
+    if t < time_real:
+        #wrong_id_list.append(list_id[n_id])
+        fp.write(list_id[n_id]+',')
+    else:
+        pass
+    n_id += 1
+print("文档存储完毕")
 
